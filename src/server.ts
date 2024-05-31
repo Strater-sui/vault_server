@@ -1,5 +1,5 @@
-import { Keypair } from "@mysten/sui.js/cryptography";
-import { SuiClient, getFullnodeUrl } from "@mysten/sui.js/client";
+import { Keypair } from "@mysten/sui/cryptography";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
 
 export class Server{
   private keypair: Keypair;
@@ -10,3 +10,4 @@ export class Server{
     this.client = new SuiClient({ url: getFullnodeUrl("mainnet") });
   }
 }
+
