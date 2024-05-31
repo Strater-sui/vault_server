@@ -21,9 +21,7 @@ const vaultServer =  new Server(keypair)
 let num = 0
 const job = new CronJob("*/1 * * * * *", async function () {
   try {
-    logger.debug(`Running`);
-  logger.info(num)
-  num += 1
+    await vaultServer.rebalance()
   } catch (error) {
     logger.error(error);
   } finally {
