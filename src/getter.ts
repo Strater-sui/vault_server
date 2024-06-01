@@ -17,14 +17,13 @@ export async function getUnderlyingProfits(
   });
 
   const returnValues = res?.results?.[0]?.returnValues;
-  logger.info(returnValues)
   if (!returnValues || returnValues?.[0][0][0] === 0) {
     return 0;
   } else {
     const valueType = returnValues[0][1];
     const valueData = returnValues[0][0];
     return Number(
-      bcs.u8().parse( Uint8Array.from(valueData as Iterable<number>)),
+      bcs.u8().parse(Uint8Array.from(valueData as Iterable<number>)),
     );
   }
 }

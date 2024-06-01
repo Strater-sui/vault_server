@@ -30,7 +30,29 @@ export const SHARED_OBJECTS = {
     initialSharedVersion: 1,
     mutable: false,
   },
+
+  // CETUS
+  CETUS_GLOBAL_CONFIG: {
+    objectId:
+      "0xdaa46292632c3c4d8f31f23ea0f9b36a28ff3677e9684980e4438403a67a3d8f",
+    initialSharedVersion: 1574190,
+    mutable: false,
+  },
+  CETUS_USDC_SUI_POOL: {
+    objectId:
+      "0xcf994611fd4c48e277ce3ffd4d4364c914af2c3cbb05f7bf6facd371de688630",
+    initialSharedVersion: 1580450,
+    mutable: true,
+  },
+  // BUCKET
+  BUCKET_PROTOCOL_OBJECT: {
+    objectId:
+      "0x9e3dab13212b27f5434416939db5dec6a319d15b89a84fd074d03ece6350d3df",
+    mutable: true,
+    initialSharedVersion: 6365975,
+  },
 };
+
 export const OWNED_OBJECTS = {
   VAULT_ADMIN_CAP:
     "0x814e99789317781177f91820f22867ebed4b842cb2a6cac5595f91136f944bde",
@@ -43,6 +65,7 @@ export const DUMMY_ADDRESS =
 
 const SAVING_VAULT_PACKAGE_ID =
   "0x5dbe7ac885a796a823c7241d190e6a0aa7404b30848465cafa226acccbe01fec";
+
 export const TARGETS = {
   // SAVING_VAULT_STRATEGY
   UNDERLYING_PROFITS:
@@ -58,10 +81,18 @@ export const TARGETS = {
   // SAVING_VAULT
   CALC_REBALANCE_AMOUNTS:
     "0x5dbe7ac885a796a823c7241d190e6a0aa7404b30848465cafa226acccbe01fec::vault::calc_rebalance_amounts",
+  // CETUS
+  CETUS_SWAP:
+    "0x6f5e582ede61fe5395b50c4a449ec11479a54d7ff8e0158247adfda60d98970b::router::swap",
+  // BUCKET
+  BUCKET_CHARGE_RESERVOIR:
+    "0xae5f248cacff46bc1ff9a2b0049963ad320b4d05a3d8b5dc3833e77c85cb6600::buck::charge_reservoir",
 };
 
 export const COIN_TYPES = {
   BUCK: "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK",
   ST_SBUCK:
     "0xbe225286e3b4aa2aea6ed2087da3a6db42eace16412dad723d2a3867846cf9f4::st_sbuck::ST_SBUCK",
+  SUI: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+  USDC: "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN",
 };

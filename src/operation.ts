@@ -20,6 +20,51 @@ export function newZeroBalance(
     typeArguments: [coinType],
   });
 }
+export function newZeroCoin(
+  tx: Transaction,
+  coinType: string,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::zero",
+    typeArguments: [coinType],
+  });
+}
+
+export function coinFromBalance(
+  tx: Transaction,
+  coinType: string,
+  balance: TransactionArgument,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::from_balance",
+    typeArguments: [coinType],
+    arguments: [balance],
+  });
+}
+
+export function coinIntoBalance(
+  tx: Transaction,
+  coinType: string,
+  coin: TransactionArgument,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::into_balance",
+    typeArguments: [coinType],
+    arguments: [coin],
+  });
+}
+
+export function getCoinValue(
+  tx: Transaction,
+  coinType: string,
+  coin: TransactionArgument,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::value",
+    typeArguments: [coinType],
+    arguments: [coin],
+  });
+}
 
 export function underlyingProfits(tx: Transaction) {
   tx.moveCall({
@@ -45,14 +90,13 @@ export function skimBaseProfits(tx: Transaction) {
   });
 }
 
-export function takeProfitsForSelling(tx: Transaction) {
-  const foo = tx.pure(bcs.U64.serialize(100));
-  tx.moveCall({
+export function takeProfitsForSelling(tx: Transaction): TransactionResult {
+  return tx.moveCall({
     target: TARGETS.TAKE_PROFITS_FOR_SELLING,
     arguments: [
       tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
-      tx.pure(bcs.option(bcs.U8).serialize(0)),
+      tx.pure(bcs.option(bcs.U64).serialize(0)),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
     ],
@@ -102,6 +146,51 @@ export function rebalance(
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FLASK),
       tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+    ],
+  });
+}
+
+export function cetusSwapSuiToUsdc(
+  tx: Transaction,
+  senderAddress: string,
+  suiCoin: TransactionArgument,
+): TransactionArgument {
+  const zeroUsdcCoin = newZeroCoin(tx, COIN_TYPES.USDC);
+  const suiCoinValue = getCoinValue(tx, COIN_TYPES.SUI, suiCoin);
+
+  const [usdcOutCoin, suiOutCoin] = tx.moveCall({
+    target: TARGETS.CETUS_SWAP,
+    typeArguments: [COIN_TYPES.USDC, COIN_TYPES.SUI],
+    arguments: [
+      tx.sharedObjectRef(SHARED_OBJECTS.CETUS_GLOBAL_CONFIG),
+      tx.sharedObjectRef(SHARED_OBJECTS.CETUS_USDC_SUI_POOL),
+      zeroUsdcCoin,
+      suiCoin,
+      tx.pure(bcs.bool().serialize(true)),
+      tx.pure(bcs.bool().serialize(true)),
+      suiCoinValue,
+      tx.pure(bcs.u128().serialize(4295048016)),
+      tx.pure(bcs.bool().serialize(false)),
+      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+    ],
+  });
+
+  tx.transferObjects([suiOutCoin], senderAddress);
+  return usdcOutCoin;
+}
+
+// @return; buckBalance
+export function bucketPSMSwapForBuck(
+  tx: Transaction,
+  coinType: string,
+  balance: TransactionArgument,
+): TransactionResult {
+  return tx.moveCall({
+    target: TARGETS.BUCKET_CHARGE_RESERVOIR,
+    typeArguments: [coinType],
+    arguments: [
+      tx.sharedObjectRef(SHARED_OBJECTS.BUCKET_PROTOCOL_OBJECT),
+      balance,
     ],
   });
 }
