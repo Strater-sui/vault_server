@@ -83,7 +83,7 @@ export const TARGETS = {
     "0x5dbe7ac885a796a823c7241d190e6a0aa7404b30848465cafa226acccbe01fec::vault::calc_rebalance_amounts",
   // CETUS
   CETUS_SWAP:
-    "0x6f5e582ede61fe5395b50c4a449ec11479a54d7ff8e0158247adfda60d98970b::router::swap",
+    "0x8faab90228e4c4df91c41626bbaefa19fc25c514405ac64de54578dec9e6f5ee::router::swap",
   // BUCKET
   BUCKET_CHARGE_RESERVOIR:
     "0xae5f248cacff46bc1ff9a2b0049963ad320b4d05a3d8b5dc3833e77c85cb6600::buck::charge_reservoir",

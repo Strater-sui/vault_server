@@ -16,6 +16,7 @@ import {
 } from "./operation";
 import { Transaction } from "@mysten/sui/transactions";
 import { COIN_TYPES } from "./lib/const";
+import { bcs } from "@mysten/sui/bcs";
 
 export class Server {
   private keypair: Keypair;
@@ -33,12 +34,7 @@ export class Server {
 
     logger.info({ underlyingProfits });
 
-    if (underlyingProfits == 0) {
-      const zeroBuckBalance = newZeroBalance(tx, COIN_TYPES.BUCK);
-      depositSoldProfits(tx, zeroBuckBalance);
-      const rebalanceAmounts = calcRebalanceAmounts(tx);
-      rebalance(tx, rebalanceAmounts);
-    } else {
+    if (underlyingProfits >= 100000) {
       // require to swap underlyingProfits for BUCK
       const suiBalance = takeProfitsForSelling(tx);
       const suiCoin = coinFromBalance(tx, COIN_TYPES.SUI, suiBalance);
@@ -59,12 +55,19 @@ export class Server {
       depositSoldProfits(tx, buckBalance);
       const rebalanceAmounts = calcRebalanceAmounts(tx);
       rebalance(tx, rebalanceAmounts);
+    } else {
+      const zeroBuckBalance = newZeroBalance(tx, COIN_TYPES.BUCK);
+      skimBaseProfits(tx);
+      depositSoldProfits(tx, zeroBuckBalance);
+      const rebalanceAmounts = calcRebalanceAmounts(tx);
+      rebalance(tx, rebalanceAmounts);
     }
 
     const res = await this.client.devInspectTransactionBlock({
       transactionBlock: tx as any,
       sender: this.keypair.toSuiAddress(),
     });
+
     tx.getData().commands.forEach((data, idx) => logger.info({ idx, data }));
     logger.info({ res });
 
