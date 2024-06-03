@@ -34,9 +34,7 @@ export class Server {
 
     logger.info({ underlyingProfits });
 
-    return;
-
-    if (underlyingProfits >= 100000) {
+    if (underlyingProfits > 0) {
       // require to swap underlyingProfits for BUCK
       const suiBalance = takeProfitsForSelling(tx);
       const suiCoin = coinFromBalance(tx, COIN_TYPES.SUI, suiBalance);
@@ -65,20 +63,21 @@ export class Server {
       rebalance(tx, rebalanceAmounts);
     }
 
-    const res = await this.client.devInspectTransactionBlock({
-      transactionBlock: tx as any,
-      sender: this.keypair.toSuiAddress(),
+    logger.info({ tx: tx.blockData.transactions });
+    tx.setSender(this.keypair.toSuiAddress());
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
     });
 
-    tx.getData().commands.forEach((data, idx) => logger.info({ idx, data }));
     logger.info({ res });
 
-    // if (res.effects.status.status === "success") {
-    //   const resp = this.client.signAndExecuteTransaction({
-    //     transaction: tx,
-    //     signer: this.keypair,
-    //   });
-    //   logger.info({ resp });
-    // }
+    if (res.effects.status.status === "success") {
+      const resp = this.client.signAndExecuteTransaction({
+        transaction: tx,
+        signer: this.keypair,
+      });
+      logger.info({ resp });
+    }
   }
 }

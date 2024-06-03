@@ -23,7 +23,7 @@ export async function getUnderlyingProfits(
     const valueType = returnValues[0][1];
     const valueData = returnValues[0][0];
     return Number(
-      bcs.u8().parse(Uint8Array.from(valueData as Iterable<number>)),
+      bcs.u64().parse(Uint8Array.from(valueData as Iterable<number>)),
     );
   }
 }

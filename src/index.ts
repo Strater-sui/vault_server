@@ -6,6 +6,7 @@ import { createPrivateKey } from "crypto";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 import { CronJob } from "cron";
 import { logger } from "./logger";
+import { BucketClient } from "bucket-protocol-sdk";
 
 dotenv.config();
 

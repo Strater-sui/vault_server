@@ -96,7 +96,7 @@ export function takeProfitsForSelling(tx: Transaction): TransactionResult {
     arguments: [
       tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
-      tx.pure(bcs.option(bcs.U64).serialize(0)),
+      tx.pure(bcs.option(bcs.U64).serialize(null)),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
     ],
