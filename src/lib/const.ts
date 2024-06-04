@@ -1,5 +1,5 @@
 import { normalizeSuiAddress } from "@mysten/sui/utils";
-
+export const SLIPPAGE = 0.005;
 export const SHARED_OBJECTS = {
   ST_SBUCK_SAVING_VAULT: {
     objectId:
@@ -84,7 +84,8 @@ export const TARGETS = {
   // CETUS
   CETUS_SWAP:
     "0x8faab90228e4c4df91c41626bbaefa19fc25c514405ac64de54578dec9e6f5ee::router::swap",
-  // BUCKET
+  CETUS_CHECK_COIN_THRESHOLD:
+    "0x8faab90228e4c4df91c41626bbaefa19fc25c514405ac64de54578dec9e6f5ee::router::check_coin_threshold", // BUCKET
   BUCKET_CHARGE_RESERVOIR:
     "0xae5f248cacff46bc1ff9a2b0049963ad320b4d05a3d8b5dc3833e77c85cb6600::buck::charge_reservoir",
 };

@@ -178,6 +178,18 @@ export function cetusSwapSuiToUsdc(
   tx.transferObjects([suiOutCoin], senderAddress);
   return usdcOutCoin;
 }
+export function checkCoinThreshold(
+  tx: Transaction,
+  coin: TransactionArgument,
+  type: string,
+  limitAmount: bigint,
+) {
+  tx.moveCall({
+    target: TARGETS.CETUS_CHECK_COIN_THRESHOLD,
+    typeArguments: [type],
+    arguments: [coin, tx.pure(bcs.u64().serialize(limitAmount))],
+  });
+}
 
 // @return; buckBalance
 export function bucketPSMSwapForBuck(

@@ -6,6 +6,7 @@ import {
   bucketPSMSwapForBuck,
   calcRebalanceAmounts,
   cetusSwapSuiToUsdc,
+  checkCoinThreshold,
   coinFromBalance,
   coinIntoBalance,
   depositSoldProfits,
@@ -15,8 +16,8 @@ import {
   takeProfitsForSelling,
 } from "./operation";
 import { Transaction } from "@mysten/sui/transactions";
-import { COIN_TYPES } from "./lib/const";
-import { bcs } from "@mysten/sui/bcs";
+import { COIN_TYPES, SLIPPAGE } from "./lib/const";
+import { BucketClient } from "bucket-protocol-sdk";
 
 export class Server {
   private keypair: Keypair;
@@ -32,7 +33,7 @@ export class Server {
 
     const underlyingProfits = await getUnderlyingProfits(this.client);
 
-    logger.info({ underlyingProfits });
+    logger.info({ underlyingProfits: underlyingProfits / 10 ** 9 });
 
     if (underlyingProfits > 0) {
       // require to swap underlyingProfits for BUCK
@@ -42,6 +43,19 @@ export class Server {
         tx,
         this.keypair.toSuiAddress(),
         suiCoin,
+      );
+      const bucketClient = new BucketClient();
+      const suiPrice = (await bucketClient.getPrices()).SUI;
+      const minUSDCAmount =
+        underlyingProfits * suiPrice * (1 - SLIPPAGE) * 10 ** (6 - 9);
+
+      logger.info({ minUSDCAmount });
+
+      checkCoinThreshold(
+        tx,
+        usdcCoin,
+        COIN_TYPES.USDC,
+        BigInt(Math.floor(minUSDCAmount)),
       );
       const usdcBalance = coinIntoBalance(tx, COIN_TYPES.USDC, usdcCoin);
       const buckBalance = bucketPSMSwapForBuck(
