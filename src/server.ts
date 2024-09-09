@@ -49,8 +49,6 @@ export class Server {
       const minUSDCAmount =
         underlyingProfits * suiPrice * (1 - SLIPPAGE) * 10 ** (6 - 9);
 
-      logger.info({ minUSDCAmount });
-
       checkCoinThreshold(
         tx,
         usdcCoin,
@@ -77,7 +75,7 @@ export class Server {
       rebalance(tx, rebalanceAmounts);
     }
 
-    logger.info({ tx: tx.blockData.transactions });
+    //logger.info({ tx: tx.blockData.transactions });
     tx.setSender(this.keypair.toSuiAddress());
     const bytes = await tx.build({ client: this.client });
     const res = await this.client.dryRunTransactionBlock({

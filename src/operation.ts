@@ -178,6 +178,7 @@ export function cetusSwapSuiToUsdc(
   tx.transferObjects([suiOutCoin], senderAddress);
   return usdcOutCoin;
 }
+
 export function checkCoinThreshold(
   tx: Transaction,
   coin: TransactionArgument,
