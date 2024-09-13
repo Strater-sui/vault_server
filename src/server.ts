@@ -85,11 +85,12 @@ export class Server {
     logger.info({ res });
 
     if (res.effects.status.status === "success") {
-      const resp = this.client.signAndExecuteTransaction({
+      const resp = await this.client.signAndExecuteTransaction({
         transaction: tx,
         signer: this.keypair,
       });
       logger.info({ resp });
+      logger.info("🚀 successful transaction");
     }
   }
 }

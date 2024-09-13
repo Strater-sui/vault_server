@@ -10,6 +10,7 @@ import {
   TARGETS,
 } from "./lib/const";
 import { bcs } from "@mysten/sui/bcs";
+import { PROTOCOL_ID, PROTOCOL_OBJECT } from "bucket-protocol-sdk";
 
 export function newZeroBalance(
   tx: Transaction,
@@ -83,6 +84,7 @@ export function skimBaseProfits(tx: Transaction) {
     arguments: [
       tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
+      tx.sharedObjectRef(PROTOCOL_OBJECT),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FLASK),
       tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
@@ -143,6 +145,7 @@ export function rebalance(
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
       rebalanceAmounts,
+      tx.sharedObjectRef(SHARED_OBJECTS.BUCKET_PROTOCOL_OBJECT),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FLASK),
       tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
