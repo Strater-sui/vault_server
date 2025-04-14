@@ -75,6 +75,7 @@ export class Server {
       rebalance(tx, rebalanceAmounts);
     }
 
+    tx.blockData.transactions.forEach((tx, idx) => console.log({ [idx]: tx }));
     //logger.info({ tx: tx.blockData.transactions });
     tx.setSender(this.keypair.toSuiAddress());
     const bytes = await tx.build({ client: this.client });

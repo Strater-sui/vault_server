@@ -64,7 +64,7 @@ export const DUMMY_ADDRESS =
   "0x0c434f35a9b9a569e4f6476b6d1dafcc767de25f3d143e864e8ce319df85d052";
 
 const SAVING_VAULT_PACKAGE_ID =
-  "0x75fe358d87679b30befc498a8dae1d28ca9eed159ab6f2129a654a8255e5610e";
+  "0x3687a2ac5b5d42d9bfc53b925c153a496d5bf1568b63cb7df40a9c838e2e2a80";
 
 export const TARGETS = {
   // SAVING_VAULT_STRATEGY
@@ -77,12 +77,12 @@ export const TARGETS = {
   CALC_REBALANCE_AMOUNTS: `${SAVING_VAULT_PACKAGE_ID}::vault::calc_rebalance_amounts`,
   // CETUS
   CETUS_SWAP:
-    "0x8faab90228e4c4df91c41626bbaefa19fc25c514405ac64de54578dec9e6f5ee::router::swap",
+    "0x2d8c2e0fc6dd25b0214b3fa747e0fd27fd54608142cd2e4f64c1cd350cc4add4::router::swap",
   CETUS_CHECK_COIN_THRESHOLD:
-    "0x8faab90228e4c4df91c41626bbaefa19fc25c514405ac64de54578dec9e6f5ee::router::check_coin_threshold",
+    "0x2d8c2e0fc6dd25b0214b3fa747e0fd27fd54608142cd2e4f64c1cd350cc4add4::router::check_coin_threshold",
   // BUCKET
   BUCKET_CHARGE_RESERVOIR:
-    "0xb71c0893203d0f59622fc3fac849d0833de559d7503af21c5daf880d60d754ed::buck::charge_reservoir",
+    "0x0b6ba9889bb71abc5fa89e4ad5db12e63bc331dba858019dd8d701bc91184d79::buck::charge_reservoir",
 };
 
 export const COIN_TYPES = {
