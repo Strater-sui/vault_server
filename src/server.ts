@@ -15,17 +15,29 @@ import {
   skimBaseProfits,
   takeProfitsForSelling,
 } from "./operation";
-import { Transaction } from "@mysten/sui/transactions";
-import { COIN_TYPES, SLIPPAGE } from "./lib/const";
+import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
+import { CETUS_PARTNER_ID, COIN_TYPES, SLIPPAGE } from "./lib/const";
 import { BucketClient } from "bucket-protocol-sdk";
+import {
+  AggregatorClient,
+  DEFAULT_ENDPOINT,
+} from "@cetusprotocol/aggregator-sdk";
+import { BN } from "bn.js";
 
 export class Server {
   private keypair: Keypair;
   private client: SuiClient;
+  private aggregator: AggregatorClient;
 
   constructor(keypair: Keypair) {
     this.keypair = keypair;
     this.client = new SuiClient({ url: getFullnodeUrl("mainnet") });
+    this.aggregator = new AggregatorClient({
+      endpoint: DEFAULT_ENDPOINT,
+      client: this.client as never,
+      signer: this.keypair.toSuiAddress(),
+      partner: CETUS_PARTNER_ID,
+    });
   }
 
   async rebalance() {
@@ -39,11 +51,24 @@ export class Server {
       // require to swap underlyingProfits for BUCK
       const suiBalance = takeProfitsForSelling(tx);
       const suiCoin = coinFromBalance(tx, COIN_TYPES.SUI, suiBalance);
-      const usdcCoin = cetusSwapSuiToUsdc(
-        tx,
-        this.keypair.toSuiAddress(),
-        suiCoin,
-      );
+      const routers = await this.aggregator.findRouters({
+        from: COIN_TYPES.SUI,
+        target: COIN_TYPES.USDC,
+        amount: new BN(underlyingProfits.toFixed(0)),
+        byAmountIn: true,
+      });
+
+      if (!routers) {
+        logger.info("No routers found for swapping SUI for USDC");
+        return;
+      }
+      const usdcCoin = (await this.aggregator.routerSwap({
+        txb: tx as never,
+        routers,
+        inputCoin: suiCoin,
+        slippage: 0.05,
+        partner: CETUS_PARTNER_ID,
+      })) as TransactionArgument;
       const bucketClient = new BucketClient();
       const suiPrice = (await bucketClient.getPrices()).SUI;
       const minUSDCAmount =
@@ -86,12 +111,12 @@ export class Server {
     logger.info({ res });
 
     if (res.effects.status.status === "success") {
-      const resp = await this.client.signAndExecuteTransaction({
-        transaction: tx,
-        signer: this.keypair,
-      });
-      logger.info({ resp });
-      logger.info("🚀 successful transaction");
+      // const resp = await this.client.signAndExecuteTransaction({
+      //   transaction: tx,
+      //   signer: this.keypair,
+      // });
+      // logger.info({ resp });
+      // logger.info("🚀 successful transaction");
     }
   }
 }
