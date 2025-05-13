@@ -111,12 +111,12 @@ export class Server {
     logger.info({ res });
 
     if (res.effects.status.status === "success") {
-      // const resp = await this.client.signAndExecuteTransaction({
-      //   transaction: tx,
-      //   signer: this.keypair,
-      // });
-      // logger.info({ resp });
-      // logger.info("🚀 successful transaction");
+      const resp = await this.client.signAndExecuteTransaction({
+        transaction: tx,
+        signer: this.keypair,
+      });
+      logger.info({ resp });
+      logger.info("🚀 successful transaction");
     }
   }
 }
