@@ -64,7 +64,7 @@ export const DUMMY_ADDRESS =
   "0x0c434f35a9b9a569e4f6476b6d1dafcc767de25f3d143e864e8ce319df85d052";
 
 const SAVING_VAULT_PACKAGE_ID =
-  "0x3687a2ac5b5d42d9bfc53b925c153a496d5bf1568b63cb7df40a9c838e2e2a80";
+  "0xe3cebd65a961b580068df236d44bc84a2ac6ef2c9dd42df1b07fc6600ab0eeda";
 
 export const TARGETS = {
   // SAVING_VAULT_STRATEGY
