@@ -6,6 +6,8 @@ import {
 import {
   COIN_TYPES,
   OWNED_OBJECTS,
+  SAVING_VAULT_ADMIN_CONTROL_PACKAGE_ID,
+  SAVING_VAULT_ADMIN_CONTROL_SHARED_OBJECT_REF,
   SHARED_OBJECTS,
   TARGETS,
 } from "./lib/const";
@@ -78,11 +80,14 @@ export function underlyingProfits(tx: Transaction) {
   });
 }
 
-export function skimBaseProfits(tx: Transaction) {
+export function skimBaseProfits(
+  tx: Transaction,
+  strategyCap: TransactionArgument,
+) {
   tx.moveCall({
     target: TARGETS.SKIM_BASE_PROFITS,
     arguments: [
-      tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
+      strategyCap,
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(PROTOCOL_OBJECT),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
@@ -92,11 +97,14 @@ export function skimBaseProfits(tx: Transaction) {
   });
 }
 
-export function takeProfitsForSelling(tx: Transaction): TransactionResult {
+export function takeProfitsForSelling(
+  tx: Transaction,
+  strategyCap: TransactionArgument,
+): TransactionResult {
   return tx.moveCall({
     target: TARGETS.TAKE_PROFITS_FOR_SELLING,
     arguments: [
-      tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
+      strategyCap,
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.pure(bcs.option(bcs.U64).serialize(null)),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
@@ -107,12 +115,13 @@ export function takeProfitsForSelling(tx: Transaction): TransactionResult {
 
 export function depositSoldProfits(
   tx: Transaction,
+  strategyCap: TransactionArgument,
   buckBalance: TransactionArgument,
 ) {
   tx.moveCall({
     target: TARGETS.DEPOSIT_SOLD_PROFITS,
     arguments: [
-      tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
+      strategyCap,
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
       buckBalance,
@@ -135,13 +144,14 @@ export function calcRebalanceAmounts(tx: Transaction): TransactionResult {
 
 export function rebalance(
   tx: Transaction,
+  strategyCap: TransactionArgument,
   rebalanceAmounts: TransactionArgument,
 ): TransactionResult {
   // return 'rebalanceAmounts'
   return tx.moveCall({
     target: TARGETS.REBALANCE,
     arguments: [
-      tx.object(OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP),
+      strategyCap,
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
       rebalanceAmounts,
@@ -207,6 +217,34 @@ export function bucketPSMSwapForBuck(
     arguments: [
       tx.sharedObjectRef(SHARED_OBJECTS.BUCKET_PROTOCOL_OBJECT),
       balance,
+    ],
+  });
+}
+
+export function borrowStrategyCap(tx: Transaction) {
+  const [strategyCap, borrow] = tx.moveCall({
+    target: `${SAVING_VAULT_ADMIN_CONTROL_PACKAGE_ID}::admin_control::borrow`,
+    typeArguments: [COIN_TYPES.ST_SBUCK],
+    arguments: [
+      tx.sharedObjectRef(SAVING_VAULT_ADMIN_CONTROL_SHARED_OBJECT_REF),
+    ],
+  });
+
+  return [strategyCap, borrow];
+}
+
+export function putBack(
+  tx: Transaction,
+  strategyCap: TransactionArgument,
+  borrow: TransactionArgument,
+) {
+  tx.moveCall({
+    target: `${SAVING_VAULT_ADMIN_CONTROL_PACKAGE_ID}::admin_control::put_back`,
+    typeArguments: [COIN_TYPES.ST_SBUCK],
+    arguments: [
+      tx.sharedObjectRef(SAVING_VAULT_ADMIN_CONTROL_SHARED_OBJECT_REF),
+      strategyCap,
+      borrow,
     ],
   });
 }

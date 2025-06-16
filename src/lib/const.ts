@@ -56,8 +56,8 @@ export const SHARED_OBJECTS = {
 export const OWNED_OBJECTS = {
   VAULT_ADMIN_CAP:
     "0xa6f908d178d44d037e31e05f9fea6d3f941bd36eeade3e49ea65dfca12414fb2",
-  SAVING_VAULT_STRATEGY_CAP:
-    "0xb006b238634aaf3f1edaf25bd20b336552941be61771bdfb2ce13f311ec25d53",
+  // SAVING_VAULT_STRATEGY_CAP:
+  //   "0xb006b238634aaf3f1edaf25bd20b336552941be61771bdfb2ce13f311ec25d53",
 };
 
 export const DUMMY_ADDRESS =
@@ -95,3 +95,14 @@ export const COIN_TYPES = {
 
 export const CETUS_PARTNER_ID =
   "0x05940f93c2a5afbdfd3fd089571d0f8b5626d57250f72dd2f24351ec4d8aef51";
+
+
+
+// -- AdminControl
+export const SAVING_VAULT_ADMIN_CONTROL_PACKAGE_ID = "0x7947fc620ee7a904b26f7687e9ee9a5a4a525e4a721a01890d7c3980d74e4735"
+export const SAVING_VAULT_ADMIN_CONTROL_SHARED_OBJECT_REF = {
+    objectId:
+      "0x55a2a0339b91bc144f9b60abfa1fd67c778d6030c817b4f403038dc91b98fe34",
+    initialSharedVersion: 576278148,
+    mutable: true,
+}

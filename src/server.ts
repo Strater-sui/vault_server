@@ -3,6 +3,7 @@ import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
 import { getUnderlyingProfits } from "./getter";
 import { logger } from "./logger";
 import {
+  borrowStrategyCap,
   bucketPSMSwapForBuck,
   calcRebalanceAmounts,
   cetusSwapSuiToUsdc,
@@ -11,6 +12,7 @@ import {
   coinIntoBalance,
   depositSoldProfits,
   newZeroBalance,
+  putBack,
   rebalance,
   skimBaseProfits,
   takeProfitsForSelling,
@@ -48,8 +50,10 @@ export class Server {
     logger.info({ underlyingProfits: underlyingProfits / 10 ** 9 });
 
     if (underlyingProfits > 0) {
+      // borrow strategyCap from sharedObj
+      const [strategyCap, borrow] = borrowStrategyCap(tx);
       // require to swap underlyingProfits for BUCK
-      const suiBalance = takeProfitsForSelling(tx);
+      const suiBalance = takeProfitsForSelling(tx, strategyCap);
       const suiCoin = coinFromBalance(tx, COIN_TYPES.SUI, suiBalance);
       const routers = await this.aggregator.findRouters({
         from: COIN_TYPES.SUI,
@@ -88,16 +92,21 @@ export class Server {
       );
 
       // skim accrued fee revenue
-      skimBaseProfits(tx);
-      depositSoldProfits(tx, buckBalance);
+      skimBaseProfits(tx, strategyCap);
+      depositSoldProfits(tx, strategyCap, buckBalance);
       const rebalanceAmounts = calcRebalanceAmounts(tx);
-      rebalance(tx, rebalanceAmounts);
+      rebalance(tx, strategyCap, rebalanceAmounts);
+
+      putBack(tx, strategyCap, borrow);
     } else {
       const zeroBuckBalance = newZeroBalance(tx, COIN_TYPES.BUCK);
-      skimBaseProfits(tx);
-      depositSoldProfits(tx, zeroBuckBalance);
+      const [strategyCap, borrow] = borrowStrategyCap(tx);
+      skimBaseProfits(tx, strategyCap);
+      depositSoldProfits(tx, strategyCap, zeroBuckBalance);
       const rebalanceAmounts = calcRebalanceAmounts(tx);
-      rebalance(tx, rebalanceAmounts);
+      rebalance(tx, strategyCap, rebalanceAmounts);
+
+      putBack(tx, strategyCap, borrow);
     }
 
     tx.blockData.transactions.forEach((tx, idx) => console.log({ [idx]: tx }));
