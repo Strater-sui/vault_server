@@ -15,22 +15,23 @@ const keypair = Ed25519Keypair.fromSecretKey(secretKey);
 
 const vaultServer = new Server(keypair);
 
-(async () => {
-  try {
-    await vaultServer.rebalance();
-  } catch (error) {
-    console.log("error", error);
-  }
-})();
-
-// const job = new CronJob("0 0 */1 * * *", async function () {
+// (async () => {
 //   try {
 //     await vaultServer.rebalance();
 //   } catch (error) {
-//     logger.error(error);
-//   } finally {
-//     logger.info("Finish");
+//     console.log("error", error);
 //   }
-// });
-//
-// job.start();
+// })();
+
+// Run every hour
+const job = new CronJob("0 0 */1 * * *", async function () {
+  try {
+    await vaultServer.rebalance();
+  } catch (error) {
+    logger.error(error);
+  } finally {
+    logger.info("Finish");
+  }
+});
+
+job.start();
